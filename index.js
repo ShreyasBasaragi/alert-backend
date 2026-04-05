@@ -14,7 +14,7 @@ admin.initializeApp({
 });
 
 // 🚨 ALERT API
-app.get("/send-alert", async (req, res) => {
+app.post("/send-alert", async (req, res) => {
   try {
     const message = {
       topic: "group_123",
