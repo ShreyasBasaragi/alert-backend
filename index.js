@@ -16,23 +16,30 @@ admin.initializeApp({
 // 🚨 ALERT API
 app.post("/send-alert", async (req, res) => {
   try {
+    const { groupCode, title, body } = req.body || {};
+
+    if (!groupCode) {
+      return res.status(400).json({ error: "groupCode is required" });
+    }
+
     const message = {
-      topic: "group_123",
+      topic: `group_${groupCode}`,
       data: {
-        title: "ALERT 🚨",
-        body: "Someone triggered alert",
+        title: title || "ALERT 🚨",
+        body: body || "Someone triggered alert",
       },
     };
 
     await admin.messaging().send(message);
 
-    res.send("Alert sent");
+    res.json({ ok: true, sentTo: `group_${groupCode}` });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error");
+    res.status(500).json({ ok: false, error: "Failed to send alert" });
   }
 });
+const PORT = process.env.PORT || 3000;
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(PORT, () => {
+  console.log("Server running");
 });
